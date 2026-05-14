@@ -1,6 +1,7 @@
 "use client";
 
 import { PhaserGame } from "@/components/game/PhaserGame";
+import { HudOverlay } from "@/components/hud/HudOverlay";
 import { DEFAULT_SCENES, GAME_HEIGHT, GAME_WIDTH } from "@/game/config";
 
 export function CommandCenter() {
@@ -12,7 +13,7 @@ export function CommandCenter() {
         height={GAME_HEIGHT}
         className="absolute inset-0"
       />
-      {/* React HUD overlays mount in the next commit. */}
+      <HudOverlay />
     </div>
   );
 }
