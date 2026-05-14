@@ -1,5 +1,6 @@
 "use client";
 
+import { BottomNav } from "@/components/hud/BottomNav";
 import { HudBridge } from "@/components/hud/HudBridge";
 import { LeftPanel } from "@/components/hud/LeftPanel";
 import { RightPanel } from "@/components/hud/RightPanel";
@@ -10,11 +11,12 @@ export function HudOverlay() {
     <div
       className="pointer-events-none absolute inset-0 grid"
       style={{
-        gridTemplateRows: "80px 1fr",
+        gridTemplateRows: "80px 1fr 64px",
         gridTemplateColumns: "auto 1fr auto",
         gridTemplateAreas: `
           "top top top"
           "left center right"
+          "bottom bottom bottom"
         `,
       }}
     >
@@ -28,7 +30,9 @@ export function HudOverlay() {
       <div style={{ gridArea: "right" }}>
         <RightPanel />
       </div>
-      {/* center cell stays empty so the Phaser canvas behind it remains clickable */}
+      <div style={{ gridArea: "bottom" }}>
+        <BottomNav />
+      </div>
     </div>
   );
 }
