@@ -1,14 +1,24 @@
-export default function Page() {
-  return (
-    <main className="flex h-screen w-screen items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-2xl tracking-[0.4em] text-[var(--color-hom-accent-gold)]">
-          HOUSE OF MITCHELL
-        </h1>
-        <p className="mt-2 text-sm text-[var(--color-hom-accent-green)]">
-          Apex Command Center — V1 scaffold
-        </p>
+"use client";
+
+import dynamic from "next/dynamic";
+
+const CommandCenter = dynamic(
+  () =>
+    import("@/components/game/CommandCenter").then((m) => ({
+      default: m.CommandCenter,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <span className="text-sm tracking-[0.4em] text-[var(--color-hom-accent-green)]">
+          BOOTING APEX...
+        </span>
       </div>
-    </main>
-  );
+    ),
+  },
+);
+
+export default function Page() {
+  return <CommandCenter />;
 }
