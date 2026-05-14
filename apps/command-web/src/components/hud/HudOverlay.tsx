@@ -2,6 +2,7 @@
 
 import { HudBridge } from "@/components/hud/HudBridge";
 import { LeftPanel } from "@/components/hud/LeftPanel";
+import { RightPanel } from "@/components/hud/RightPanel";
 import { TopBar } from "@/components/hud/TopBar";
 
 export function HudOverlay() {
@@ -10,10 +11,10 @@ export function HudOverlay() {
       className="pointer-events-none absolute inset-0 grid"
       style={{
         gridTemplateRows: "80px 1fr",
-        gridTemplateColumns: "auto 1fr",
+        gridTemplateColumns: "auto 1fr auto",
         gridTemplateAreas: `
-          "top top"
-          "left center"
+          "top top top"
+          "left center right"
         `,
       }}
     >
@@ -23,6 +24,9 @@ export function HudOverlay() {
       </div>
       <div style={{ gridArea: "left" }}>
         <LeftPanel />
+      </div>
+      <div style={{ gridArea: "right" }}>
+        <RightPanel />
       </div>
       {/* center cell stays empty so the Phaser canvas behind it remains clickable */}
     </div>
