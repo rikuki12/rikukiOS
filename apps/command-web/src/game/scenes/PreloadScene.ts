@@ -9,9 +9,9 @@ export class PreloadScene extends Phaser.Scene {
 
   preload() {
     this.cameras.main.setBackgroundColor("#0a0e0a");
-    // V1 has no real assets yet. Real Higgsfield outputs will be
-    // registered here via this.load.image/spritesheet, and the bar drawn
-    // below will animate via this.load.on("progress", ...).
+    // V1 has no real assets yet. Higgsfield outputs will be registered
+    // here via this.load.image/spritesheet and the bar below will
+    // animate via this.load.on("progress", ...).
   }
 
   create() {
@@ -52,6 +52,13 @@ export class PreloadScene extends Phaser.Scene {
       .setOrigin(0, 0);
 
     EventBus.emit("scene:ready", { sceneKey: SCENES.PRELOAD });
-    // Apex transition is wired in the next commit.
+
+    this.time.delayedCall(700, () => {
+      EventBus.emit("scene:transition", {
+        from: SCENES.PRELOAD,
+        to: SCENES.APEX,
+      });
+      this.scene.start(SCENES.APEX);
+    });
   }
 }
