@@ -5,6 +5,8 @@ import { MITCHELLEN_HOTSPOTS } from "@/game/data/hotspots";
 import type { Hotspot } from "@/game/types/room";
 
 export class MitchellenDigitalServicesScene extends Phaser.Scene {
+  private offPortalActivate: (() => void) | null = null;
+
   constructor() {
     super({ key: SCENES.MITCHELLEN });
   }
@@ -34,6 +36,7 @@ export class MitchellenDigitalServicesScene extends Phaser.Scene {
     this.spawnArchitect(1500, 540);
     MITCHELLEN_HOTSPOTS.forEach((h) => this.spawnHotspot(h));
     this.spawnBackPortal(width / 2, height - 140);
+    this.subscribeToHudNavigation();
 
     EventBus.emit("scene:ready", { sceneKey: SCENES.MITCHELLEN });
   }
@@ -110,6 +113,26 @@ export class MitchellenDigitalServicesScene extends Phaser.Scene {
         to: SCENES.APEX,
       });
       this.scene.start(SCENES.APEX);
+    });
+  }
+
+  private subscribeToHudNavigation() {
+    this.offPortalActivate = EventBus.on(
+      "portal:activate",
+      ({ targetSceneKey }) => {
+        if (!targetSceneKey) return;
+        if (!this.scene.isActive()) return;
+        if (targetSceneKey === SCENES.MITCHELLEN) return;
+        EventBus.emit("scene:transition", {
+          from: SCENES.MITCHELLEN,
+          to: targetSceneKey,
+        });
+        this.scene.start(targetSceneKey);
+      },
+    );
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.offPortalActivate?.();
+      this.offPortalActivate = null;
     });
   }
 }

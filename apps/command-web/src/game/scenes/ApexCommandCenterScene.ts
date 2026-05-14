@@ -20,6 +20,7 @@ export class ApexCommandCenterScene extends Phaser.Scene {
   private boss!: Phaser.GameObjects.Rectangle;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private wasd!: WASDKeys;
+  private offPortalActivate: (() => void) | null = null;
 
   constructor() {
     super({ key: SCENES.APEX });
@@ -36,6 +37,7 @@ export class ApexCommandCenterScene extends Phaser.Scene {
 
     this.spawnBoss(width / 2, height - 220);
     this.setupInput();
+    this.subscribeToHudNavigation();
 
     EventBus.emit("scene:ready", { sceneKey: SCENES.APEX });
   }
@@ -135,10 +137,6 @@ export class ApexCommandCenterScene extends Phaser.Scene {
       EventBus.emit("portal:leave", { id: portal.id });
     });
     rect.on("pointerdown", () => {
-      EventBus.emit("portal:activate", {
-        id: portal.id,
-        targetSceneKey: portal.targetSceneKey ?? "",
-      });
       if (portal.targetSceneKey) {
         EventBus.emit("scene:transition", {
           from: SCENES.APEX,
@@ -190,5 +188,25 @@ export class ApexCommandCenterScene extends Phaser.Scene {
     if (!kb) return;
     this.cursors = kb.createCursorKeys();
     this.wasd = kb.addKeys("W,A,S,D") as WASDKeys;
+  }
+
+  private subscribeToHudNavigation() {
+    this.offPortalActivate = EventBus.on(
+      "portal:activate",
+      ({ targetSceneKey }) => {
+        if (!targetSceneKey) return;
+        if (!this.scene.isActive()) return;
+        if (targetSceneKey === SCENES.APEX) return;
+        EventBus.emit("scene:transition", {
+          from: SCENES.APEX,
+          to: targetSceneKey,
+        });
+        this.scene.start(targetSceneKey);
+      },
+    );
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.offPortalActivate?.();
+      this.offPortalActivate = null;
+    });
   }
 }
